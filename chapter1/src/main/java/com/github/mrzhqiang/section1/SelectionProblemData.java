@@ -15,7 +15,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 public class SelectionProblemData {
 
   private final File dataFile = new File("..\\data.dat");
-  private final int dataLength = 3000_0000;
+  private final int dataLength = 30/*00_0000*/;
   private final Random random = new SecureRandom();
 
   private final int[] datas = new int[dataLength];
@@ -36,8 +36,8 @@ public class SelectionProblemData {
   public void bubbleSort() {
     long time = System.nanoTime();
     System.out.println("bubble sort begin.");
-    for (int i = 0; i < datas.length - 1; i++) {
-      for (int j = i; j < datas.length - 1; j++) {
+    for (int i = 0; i < datas.length; i++) {
+      for (int j = 0; j < datas.length - 1 - i; j++) {
         if (datas[j] < datas[j + 1]) {
           int temp = datas[j];
           datas[j] = datas[j + 1];
@@ -97,12 +97,12 @@ public class SelectionProblemData {
     int[] data1 = new int[k];
     System.arraycopy(datas, 0, data1, 0, k);
 
-    for (int i = 0; i < data1.length - 1; i++) {
-      for (int j = i; j < data1.length - 1; j++) {
-        if (datas[j] < datas[j + 1]) {
-          int temp = datas[j];
-          datas[j] = datas[j + 1];
-          datas[j + 1] = temp;
+    for (int i = 0; i < data1.length; i++) {
+      for (int j = 0; j < data1.length - 1 - i; j++) {
+        if (data1[j] < data1[j + 1]) {
+          int temp = data1[j];
+          data1[j] = data1[j + 1];
+          data1[j + 1] = temp;
         }
       }
     }
