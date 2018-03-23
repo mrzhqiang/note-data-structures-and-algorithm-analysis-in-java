@@ -1,5 +1,6 @@
 package com.github.mrzhqiang.section1;
 
+import com.github.mrzhqiang.TotalTimeHelper;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,20 +23,17 @@ public class SelectionProblemData {
   private final int k = dataLength / 2;
 
   public SelectionProblemData() {
-    long time = System.nanoTime();
-    System.out.println("create data begin.");
+    TotalTimeHelper helper = TotalTimeHelper.of("创建【选择问题】数据。");
     try {
       create();
     } catch (IOException e) {
       e.printStackTrace();
     }
-    long nanoTime = System.nanoTime() - time;
-    System.out.println("total time(ms): " + TimeUnit.NANOSECONDS.toMillis(nanoTime));
+    helper.total();
   }
 
   public void bubbleSort() {
-    long time = System.nanoTime();
-    System.out.println("bubble sort begin.");
+    TotalTimeHelper helper = TotalTimeHelper.of("开始冒泡排序。");
     for (int i = 0; i < datas.length; i++) {
       for (int j = 0; j < datas.length - 1 - i; j++) {
         if (datas[j] < datas[j + 1]) {
@@ -46,8 +44,7 @@ public class SelectionProblemData {
       }
     }
     System.out.println("find k data: " + datas[k - 1]);
-    long nanoTime = System.nanoTime() - time;
-    System.out.println("total time(ms): " + TimeUnit.NANOSECONDS.toMillis(nanoTime));
+    helper.total();
   }
 
   private void create() throws IOException {
@@ -91,8 +88,7 @@ public class SelectionProblemData {
   }
 
   public void betterSort() {
-    long time = System.nanoTime();
-    System.out.println("better sort begin.");
+    TotalTimeHelper helper = TotalTimeHelper.of("开始稍好的算法排序。");
 
     int[] data1 = new int[k];
     System.arraycopy(datas, 0, data1, 0, k);
@@ -137,7 +133,6 @@ public class SelectionProblemData {
     }
 
     System.out.println("find k data: " + data1[k - 1]);
-    long nanoTime = System.nanoTime() - time;
-    System.out.println("total time(ms): " + TimeUnit.NANOSECONDS.toMillis(nanoTime));
+    helper.total();
   }
 }
