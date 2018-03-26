@@ -1,7 +1,7 @@
 package com.github.mrzhqiang.section1;
 
 public class CharadeData {
-  private final char[][] data = {
+  private final char[][] datas = {
       {'t', 'h', 'i', 's'},
       {'w', 'a', 't', 's'},
       {'o', 'a', 'h', 'g'},
@@ -15,62 +15,132 @@ public class CharadeData {
     for (String word : words) {
       int wordSize = word.length();
 
-      // 列，垂直方向：检查单词长度是否在列长度范围内，不在不用考虑
-      if (wordSize <= data.length) {
-        for (int i = 0; i < data.length; i++) {
-          for (int j = 0; j < data[i].length; j++) {
+      for (int i = 0; i < datas.length; i++) {
+        char[] data = datas[i];
+        for (int j = 0; j < data.length; j++) {
+          char c = data[j];
+          // 必须首字母匹配
+          if (c == word.charAt(0)) {
+            if (data.length - j >= wordSize) {
+              // 水平正方向
+              String d = new String(data, 0, wordSize);
+              if (d.equals(word)) {
+                System.out.printf("在水平正方向上，找到从 (%d, %d) 到 (%d, %d) 的 %s%n", i, j, i, wordSize - 1,
+                    d);
+                System.out.println();
+                break;
+              }
+            } else if (j + 1 >= wordSize) {
+              // 水平反方向
+              char[] chars = new char[wordSize];
+              for (int k = 0, l = j; k < wordSize; k++, l--) {
+                chars[k] = data[l];
+              }
+              String d = new String(chars);
+              if (d.equals(word)) {
+                System.out.printf("在水平反方向上，找到从 (%d, %d) 到 (%d, %d) 的 %s%n", i, j, i,
+                    j - wordSize + 1,
+                    d);
+                System.out.println();
+                break;
+              }
+            }
 
-          }
-        }
-      }
+            if (datas.length - i >= wordSize) {
+              // 垂直正方向
+              char[] chars = new char[wordSize];
+              for (int k = 0, l = i; k < wordSize; k++, l++) {
+                chars[k] = datas[l][j];
+              }
+              String d = new String(chars);
+              if (d.equals(word)) {
+                System.out.printf("在垂直正方向上，找到从 (%d, %d) 到 (%d, %d) 的 %s%n", i, j, wordSize - 1, j,
+                    d);
+                System.out.println();
+                break;
+              }
+            } else if (i + 1 >= wordSize) {
+              // 垂直反方向
+              char[] chars = new char[wordSize];
+              for (int k = 0, l = i; k < wordSize; k++, l--) {
+                chars[k] = datas[l][j];
+              }
+              String d = new String(chars);
+              if (d.equals(word)) {
+                System.out.printf("在垂直反方向上，找到从 (%d, %d) 到 (%d, %d) 的 %s%n", i, j, i - wordSize + 1,
+                    j,
+                    d);
+                System.out.println();
+                break;
+              }
+            }
 
-      // 定位到每一行
-      for (int i = 0; i < data.length; i++) {
-        char[] line = data[i];
-
-        // 检查单词长度是否在行长度的范围内
-        if (wordSize <= line.length) {
-          int range = line.length - wordSize;
-
-          if (range == 0 && word.equals(new String(line))) {
-            System.out.println("find " + word + " in line " + i);
-            break;
-          }
-
-          for (int j = 0; j < range; j++) {
-            char[] copyRow = new char[wordSize];
-            System.arraycopy(line, j, copyRow, 0, wordSize);
-
-            if (word.equals(new String(copyRow))) {
-              System.out.println(
-                  "find forward horizontal: "
-                      + word
-                      + " in line "
-                      + i
-                      + " and from "
-                      + j
-                      + " to "
-                      + (j + wordSize));
+            if (datas.length - i >= wordSize) {
+              if (data.length - j >= wordSize) {
+                // 对角正顺方向
+                char[] chars = new char[wordSize];
+                for (int k = 0, l = i, m = j; k < wordSize; k++, l++, m++) {
+                  chars[k] = datas[l][m];
+                }
+                String d = new String(chars);
+                if (d.equals(word)) {
+                  System.out.printf("在对角正顺方向上，找到从 (%d, %d) 到 (%d, %d) 的 %s%n", i, j, wordSize - 1,
+                      wordSize - 1,
+                      d);
+                  System.out.println();
+                  break;
+                }
+              } else if (j + 1 >= wordSize) {
+                // 对角正逆方向
+                char[] chars = new char[wordSize];
+                for (int k = 0, l = i, m = j; k < wordSize; k++, l++, m--) {
+                  chars[k] = datas[l][m];
+                }
+                String d = new String(chars);
+                if (d.equals(word)) {
+                  System.out.printf("在对角正逆方向上，找到从 (%d, %d) 到 (%d, %d) 的 %s%n", i, j, wordSize - 1,
+                      j - wordSize + 1,
+                      d);
+                  System.out.println();
+                  break;
+                }
+              }
+            } else if (i + 1 >= wordSize) {
+              if (j + 1 >= wordSize) {
+                // 对角反逆方向
+                char[] chars = new char[wordSize];
+                for (int k = 0, l = i, m = j; k < wordSize; k++, l--, m--) {
+                  chars[k] = datas[l][m];
+                }
+                String d = new String(chars);
+                if (d.equals(word)) {
+                  System.out.printf("在对角反逆方向上，找到从 (%d, %d) 到 (%d, %d) 的 %s%n", i, j,
+                      i - wordSize + 1,
+                      j - wordSize + 1,
+                      d);
+                  System.out.println();
+                  break;
+                }
+              } else if (data.length - j >= wordSize) {
+                // 对角反顺方向
+                char[] chars = new char[wordSize];
+                for (int k = 0, l = i, m = j; k < wordSize; k++, l--, m++) {
+                  chars[k] = datas[l][m];
+                }
+                String d = new String(chars);
+                if (d.equals(word)) {
+                  System.out.printf("在对角反顺方向上，找到从 (%d, %d) 到 (%d, %d) 的 %s%n", i, j,
+                      i - wordSize + 1,
+                      wordSize - 1,
+                      d);
+                  System.out.println();
+                  break;
+                }
+              }
             }
           }
         }
-
-        // 遍历列
-        for (int j = 0; j < line.length; j++) {
-          char row = line[j];
-          // 水平方向
-
-        }
       }
     }
-  }
-
-  private int findCharIndex(char[] line, char c) {
-    for (int i = 0; i < line.length; i++) {
-      if (line[i] == c) {
-        return i;
-      }
-    }
-    return -1;
   }
 }

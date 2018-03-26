@@ -9,7 +9,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import javax.annotation.concurrent.NotThreadSafe;
 
 @NotThreadSafe
