@@ -6,6 +6,6 @@ public class CharadeTest {
 
   @Test
   public void testCharVerity() {
-    new CharadeData().verify();
+    CharadeData.verify();
   }
 }

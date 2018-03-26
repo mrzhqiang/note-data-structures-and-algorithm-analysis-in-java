@@ -1,16 +1,20 @@
 package com.github.mrzhqiang.section1;
 
 public class CharadeData {
-  private final char[][] datas = {
+  private CharadeData() {
+    // no instance
+  }
+
+  private static final char[][] datas = {
       {'t', 'h', 'i', 's'},
       {'w', 'a', 't', 's'},
       {'o', 'a', 'h', 'g'},
       {'f', 'g', 'd', 't'}
   };
 
-  private final String[] words = {"this", "two", "fat", "that"};
+  private static final String[] words = {"this", "two", "fat", "that"};
 
-  public void verify() {
+  public static void verify() {
     // 取得单词表中的每一个单词
     for (String word : words) {
       int wordSize = word.length();
