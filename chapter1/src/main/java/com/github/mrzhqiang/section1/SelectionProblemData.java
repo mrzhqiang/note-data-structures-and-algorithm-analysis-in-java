@@ -12,16 +12,17 @@ import java.util.Random;
 import javax.annotation.concurrent.NotThreadSafe;
 
 @NotThreadSafe
-public class SelectionProblemData {
+public final class SelectionProblemData {
 
   private final File dataFile = new File("..\\data.dat");
-  private final int dataLength = 30/*00_0000*/;
   private final Random random = new SecureRandom();
 
-  private final int[] datas = new int[dataLength];
-  private final int k = dataLength / 2;
+  private final int[] datas;
+  private final int k;
 
-  public SelectionProblemData() {
+  SelectionProblemData(int dataLength) {
+    this.datas = new int[dataLength];
+    this.k = dataLength / 2;
     TotalTimeHelper helper = TotalTimeHelper.of("创建【选择问题】数据。");
     try {
       create();
@@ -31,7 +32,7 @@ public class SelectionProblemData {
     helper.total();
   }
 
-  public void bubbleSort() {
+  public final void bubbleSort() {
     TotalTimeHelper helper = TotalTimeHelper.of("开始冒泡排序。");
     for (int i = 0; i < datas.length; i++) {
       for (int j = 0; j < datas.length - 1 - i; j++) {
@@ -55,8 +56,8 @@ public class SelectionProblemData {
           throw new IOException("can not write file: " + dataFile);
         }
 
-        for (int i = 0; i < dataLength; i++) {
-          datas[i] = random.nextInt(dataLength);
+        for (int i = 0; i < datas.length; i++) {
+          datas[i] = random.nextInt(datas.length);
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(dataFile, true))) {
@@ -75,7 +76,7 @@ public class SelectionProblemData {
         int index = 0;
         while (line != null) {
           datas[index++] = Integer.valueOf(line);
-          if (index >= dataLength) {
+          if (index >= datas.length) {
             break;
           }
           line = reader.readLine();
@@ -102,8 +103,8 @@ public class SelectionProblemData {
       }
     }
 
-    int[] data2 = new int[dataLength - k];
-    System.arraycopy(datas, k, data2, 0, dataLength - k);
+    int[] data2 = new int[datas.length - k];
+    System.arraycopy(datas, k, data2, 0, datas.length - k);
 
     for (int d2 : data2) {
       int index = k - 1;
