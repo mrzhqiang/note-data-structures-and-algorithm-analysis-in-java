@@ -4,54 +4,44 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>note-mark-allen-weiss</groupId>
-  <artifactId>parent</artifactId>
+  <groupId>com.github.mrzhqiang</groupId>
+  <artifactId>note-data-structures-and-algorithm-analysis-in-java</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <modules>
-    <module>chapter1</module>
-    <module>chapter2</module>
-  </modules>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
     <java.version>1.8</java.version>
-    <guava.version>21.0</guava.version>
-
-    <junit.version>4.12</junit.version>
   </properties>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.google.code.findbugs</groupId>
-        <artifactId>jsr305</artifactId>
-        <version>3.0.2</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>${guava.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.reactivex.rxjava2</groupId>
-        <artifactId>rxjava</artifactId>
-        <version>2.2.15</version>
-      </dependency>
-      <dependency>
-        <groupId>io.reactivex.rxjava2</groupId>
-        <artifactId>rxjavafx</artifactId>
-        <version>2.2.2</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>3.0.2</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>28.2-jre</version>
+    </dependency>
+    <dependency>
+      <groupId>io.reactivex.rxjava2</groupId>
+      <artifactId>rxjava</artifactId>
+      <version>2.2.17</version>
+    </dependency>
+    <dependency>
+      <groupId>io.reactivex.rxjava2</groupId>
+      <artifactId>rxjavafx</artifactId>
+      <version>2.2.2</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <pluginManagement>

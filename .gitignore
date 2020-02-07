@@ -26,5 +26,5 @@ obj
 .DS_Store
 
 include
-*.dat
-/result-*.md
+/dsaa-*.dat
+/dsaa-*.md
