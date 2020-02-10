@@ -4,6 +4,11 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import dsaa.internal.javafx.ApplicationInfo;
+import dsaa.internal.javafx.Applications;
+import dsaa.internal.javafx.Console;
+import dsaa.internal.javafx.Dialogs;
+import dsaa.internal.jre.Namings;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -11,31 +16,22 @@ import io.reactivex.rxjavafx.observables.JavaFxObservable;
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler;
 import io.reactivex.schedulers.Schedulers;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
@@ -51,28 +47,27 @@ import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
 public class SelectionProblem extends Application {
   private static final int MIN_DATA_SIZE = 10;
   private static final int MAX_DATA_SIZE = 3000_0000;
-  private static final String DATA_FILE = SelectionProblem.class.getCanonicalName()
-      .toLowerCase().replaceAll("\\.", "-") + ".dat";
+  private static final String DATA_FILE = Namings.ofCanonical(SelectionProblem.class, ".dat");
 
   public static void main(String[] args) {
     launch(args);
   }
 
-  public TextField dataSizeTextField;
-  public Label stateLabel;
-  public Button generateDataButton;
-  public Button cleanDataButton;
-  public Button saveDataButton;
-  public Button loadDataButton;
-  public TextField numberTextField;
-  public Button findBeginButton;
-  public Button findEndButton;
-  public TextArea consoleTextArea;
-  public ProgressBar taskProgressBar;
-  public ToggleGroup algorithmGroup;
-  public RadioButton bubbleRadio;
-  public RadioButton truncateRadio;
-  public Label durationLabel;
+  @FXML TextField dataSizeTextField;
+  @FXML Label stateLabel;
+  @FXML Button generateDataButton;
+  @FXML Button cleanDataButton;
+  @FXML Button saveDataButton;
+  @FXML Button loadDataButton;
+  @FXML TextField numberTextField;
+  @FXML Button findBeginButton;
+  @FXML Button findEndButton;
+  @FXML TextArea consoleTextArea;
+  @FXML ProgressBar taskProgressBar;
+  @FXML ToggleGroup algorithmGroup;
+  @FXML RadioButton bubbleRadio;
+  @FXML RadioButton truncateRadio;
+  @FXML Label durationLabel;
 
   private List<Integer> dataList;
   private Disposable durationDisposable;
@@ -82,25 +77,14 @@ public class SelectionProblem extends Application {
   private final BooleanProperty running = new SimpleBooleanProperty(false);
   private final CompositeDisposable disposable = new CompositeDisposable();
 
+  private final Console console = new Console();
+
   @Override
   public void start(Stage primaryStage) {
-    primaryStage.setTitle("选择问题");
-    try {
-      Parent root = FXMLLoader.load(getClass().getResource("./selection-problem.fxml"));
-      Scene scene = new Scene(root);
-      primaryStage.setScene(scene);
-      primaryStage.show();
-    } catch (Exception e) {
-      Alert alert = showError("启动出错：" + e.getMessage(), e);
-      alert.setWidth(primaryStage.getWidth());
-      alert.setOnCloseRequest(event -> Platform.exit());
-      alert.show();
-    }
-    primaryStage.setOnCloseRequest(event -> {
-      showConfirmation("是否关闭程序？将停止所有正在运行的任务！")
-          .ifPresent(buttonType -> Platform.exit());
-      event.consume();
-    });
+    Applications.start(primaryStage, ApplicationInfo.builder()
+        .title("选择问题")
+        .fxml(Applications.fxml(this))
+        .build());
   }
 
   @Override public void stop() {
@@ -108,7 +92,7 @@ public class SelectionProblem extends Application {
     Schedulers.shutdown();
   }
 
-  public void initialize() {
+  @FXML void initialize() {
     console("初始化程序..");
     filename = String.format("%s-%s.md",
         getClass().getCanonicalName().toLowerCase().replaceAll("\\.", "-"),
@@ -135,24 +119,25 @@ public class SelectionProblem extends Application {
         .map(s -> Paths.get(s))
         .filter(path -> Files.exists(path))
         .subscribe(exists -> state.setValue(State.SAVED)));
+    disposable.add(console.bind().subscribe(s -> consoleTextArea.appendText(s)));
   }
 
-  public void onGenerateDataClicked() {
+  @FXML void onGenerateDataClicked() {
     console("准备生成数据，请稍等..");
     String dataSizeText = dataSizeTextField.getText();
     if (Strings.isNullOrEmpty(dataSizeText) || !checkNumber(dataSizeText)) {
-      showWarning("无效的数据大小！");
+      Dialogs.warn("无效的数据大小！").show();
       dataSizeTextField.requestFocus();
       return;
     }
     int dataSize = Integer.parseInt(dataSizeText);
     if (dataSize < MIN_DATA_SIZE || dataSize > MAX_DATA_SIZE) {
-      showWarning("数据大小超出范围(10--30000000)");
+      Dialogs.warn("数据大小超出范围(10--30000000)").show();
       dataSizeTextField.requestFocus();
       return;
     }
     if (dataList != null && !dataList.isEmpty()) {
-      showConfirmation("是否重新生成？将覆盖当前已有数据！").ifPresent(buttonType -> generateData(dataSize));
+      Dialogs.confirm("是否重新生成？将覆盖当前已有数据！").ifPresent(buttonType -> generateData(dataSize));
       return;
     }
     generateData(dataSize);
@@ -171,9 +156,9 @@ public class SelectionProblem extends Application {
         .observeOn(JavaFxScheduler.platform())
         .subscribe(progress -> taskProgressBar.setProgress(progress),
             e -> {
-              console("生成数据出错：" + e.getLocalizedMessage());
+              console("生成数据出错：" + e.getMessage());
               generateDataButton.setDisable(false);
-              showError("生成数据出错！", e);
+              Dialogs.error(e).show();
             }, () -> {
               console("数据生成完毕！");
               generateDataButton.setDisable(false);
@@ -182,9 +167,9 @@ public class SelectionProblem extends Application {
             }));
   }
 
-  public void onSaveDataClicked() {
+  @FXML void onSaveDataClicked() {
     if (dataList == null || dataList.isEmpty()) {
-      showWarning("当前数据无效，保存失败！");
+      Dialogs.warn("当前数据无效，保存失败！").show();
       return;
     }
     console("准备保存数据，请稍等..");
@@ -203,10 +188,10 @@ public class SelectionProblem extends Application {
           console("数据已保存到文件：" + path);
           taskProgressBar.setProgress(0);
         }, e -> {
-          console("保存数据出错：" + e.getLocalizedMessage());
+          console("保存数据出错：" + e.getMessage());
           saveDataButton.setDisable(false);
           taskProgressBar.setProgress(0);
-          showError("保存数据出错！", e);
+          Dialogs.error(e).show();
         }, () -> {
           console("数据保存完毕！");
           saveDataButton.setDisable(false);
@@ -214,13 +199,13 @@ public class SelectionProblem extends Application {
         }));
   }
 
-  public void onLoadDataClicked() {
+  @FXML void onLoadDataClicked() {
     if (Files.notExists(Paths.get(DATA_FILE))) {
-      showWarning("当前数据文件不存在，无法加载！");
+      Dialogs.warn("当前数据文件不存在，无法加载！").show();
       return;
     }
     if (dataList != null && !dataList.isEmpty()) {
-      showConfirmation("是否重新加载？将覆盖当前已有数据！").ifPresent(buttonType -> loadData());
+      Dialogs.confirm("是否重新加载？将覆盖当前已有数据！").ifPresent(buttonType -> loadData());
       return;
     }
     loadData();
@@ -252,10 +237,10 @@ public class SelectionProblem extends Application {
           dataSizeTextField.setText(String.valueOf(dataList.size()));
           taskProgressBar.setProgress(0);
         }, e -> {
-          console("加载数据出错：" + e.getLocalizedMessage());
+          console("加载数据出错：" + e.getMessage());
           loadDataButton.setDisable(false);
           taskProgressBar.setProgress(0);
-          e.printStackTrace();
+          Dialogs.error(e).show();
         }, () -> {
           console("数据加载完毕！");
           loadDataButton.setDisable(false);
@@ -264,8 +249,8 @@ public class SelectionProblem extends Application {
         }));
   }
 
-  public void onCleanDataClicked() {
-    showConfirmation("是否清理数据？将删除当前数据和文件！").ifPresent(buttonType -> {
+  @FXML void onCleanDataClicked() {
+    Dialogs.confirm("是否清理数据？将删除当前数据和文件！").ifPresent(buttonType -> {
       console("准备清理数据，请稍等..");
       cleanDataButton.setDisable(true);
       taskProgressBar.setProgress(INDETERMINATE_PROGRESS);
@@ -282,10 +267,10 @@ public class SelectionProblem extends Application {
             console("已删除文件：" + path);
             taskProgressBar.setProgress(0);
           }, e -> {
-            console("清理数据出错：" + e.getLocalizedMessage());
+            console("清理数据出错：" + e.getMessage());
             cleanDataButton.setDisable(false);
             taskProgressBar.setProgress(0);
-            e.printStackTrace();
+            Dialogs.error(e).show();
           }, () -> {
             console("数据清理完毕！");
             cleanDataButton.setDisable(false);
@@ -294,10 +279,10 @@ public class SelectionProblem extends Application {
     });
   }
 
-  public void onFindBeginClicked() {
+  @FXML void onFindBeginClicked() {
     int k = Integer.parseInt(numberTextField.getText());
     if (k < 0 || k > dataList.size()) {
-      showWarning("无效的 K 值，请重新输入(1--" + dataList.size() + ")");
+      Dialogs.warn("无效的 K 值，请重新输入(1--" + dataList.size() + ")").show();
       return;
     }
     console("准备开始查找第 " + k + " 个最大值");
@@ -331,11 +316,11 @@ public class SelectionProblem extends Application {
               taskProgressBar.setProgress(0);
             },
             e -> {
-              console("查找出错：" + e.getLocalizedMessage());
+              console("查找出错：" + e.getMessage());
               durationDisposable.dispose();
               taskProgressBar.setProgress(0);
               running.setValue(false);
-              showError("查找出错！", e);
+              Dialogs.error(e).show();
             }, () -> {
               console("查找完毕！");
               durationDisposable.dispose();
@@ -343,7 +328,7 @@ public class SelectionProblem extends Application {
             }));
   }
 
-  public void onFindEndClicked() {
+  @FXML void onFindEndClicked() {
     console("停止查找！");
     if (durationDisposable != null) {
       durationDisposable.dispose();
@@ -354,11 +339,7 @@ public class SelectionProblem extends Application {
   }
 
   private void console(String message) {
-    String timestamp = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now());
-    String content = String.format("[%s] - %s", timestamp, message);
-    System.out.println(content);
-    consoleTextArea.appendText(content);
-    consoleTextArea.appendText(System.lineSeparator());
+    console.log(message);
   }
 
   private boolean checkNumber(String value) {
@@ -375,30 +356,6 @@ public class SelectionProblem extends Application {
     bubbleSort(data);
     long maxNumber = data[k - 1];
     return writeFile("冒泡算法", dataList.size(), k, maxNumber, started.stop().toString());
-  }
-
-  private void bubbleSort(int[] data) {
-    for (int i = 0; i < data.length - 1; i++) {
-      for (int j = 0; j < data.length - 1 - i; j++) {
-        if (data[j] < data[j + 1]) {
-          int temp = data[j];
-          data[j] = data[j + 1];
-          data[j + 1] = temp;
-        }
-      }
-    }
-  }
-
-  private String writeFile(String name, int size, int k, long maxNumber, String time) {
-    String result = String.format(
-        "|%s|%s|%s|%s|%s|%s",
-        name, size, k, maxNumber, time, System.lineSeparator());
-    disposable.add(Observable.just(result)
-        .subscribeOn(Schedulers.io())
-        .map(String::getBytes)
-        .subscribe(bytes -> Files.write(Paths.get(filename), bytes, StandardOpenOption.CREATE,
-            StandardOpenOption.APPEND)));
-    return String.format("找到最大值：%s，用时：%s", maxNumber, time);
   }
 
   private String truncate(int k) {
@@ -428,31 +385,28 @@ public class SelectionProblem extends Application {
     return writeFile("截断算法", dataList.size(), k, truncate[k - 1], started.stop().toString());
   }
 
-  private void showWarning(String message) {
-    Alert alert = new Alert(Alert.AlertType.WARNING);
-    alert.setTitle("警告！");
-    alert.setHeaderText(message);
-    alert.show();
-  }
-
-  private Alert showError(String headText, Throwable throwable) {
-    Alert alert = new Alert(Alert.AlertType.ERROR);
-    alert.setTitle("错误！");
-    alert.setHeaderText(headText);
-    if (throwable != null) {
-      throwable.printStackTrace();
-      StringWriter writer = new StringWriter();
-      throwable.printStackTrace(new PrintWriter(writer));
-      alert.setContentText(writer.toString());
+  private void bubbleSort(int[] data) {
+    for (int i = 0; i < data.length - 1; i++) {
+      for (int j = 0; j < data.length - 1 - i; j++) {
+        if (data[j] < data[j + 1]) {
+          int temp = data[j];
+          data[j] = data[j + 1];
+          data[j + 1] = temp;
+        }
+      }
     }
-    return alert;
   }
 
-  private Optional<ButtonType> showConfirmation(String message) {
-    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-    alert.setTitle("请确认！");
-    alert.setHeaderText(message);
-    return alert.showAndWait().filter(ButtonType.OK::equals);
+  private String writeFile(String name, int size, int k, long maxNumber, String time) {
+    String result = String.format(
+        "|%s|%s|%s|%s|%s|%s",
+        name, size, k, maxNumber, time, System.lineSeparator());
+    disposable.add(Observable.just(result)
+        .subscribeOn(Schedulers.io())
+        .map(String::getBytes)
+        .subscribe(bytes -> Files.write(Paths.get(filename), bytes, StandardOpenOption.CREATE,
+            StandardOpenOption.APPEND)));
+    return String.format("找到最大值：%s，用时：%s", maxNumber, time);
   }
 
   private enum State {
