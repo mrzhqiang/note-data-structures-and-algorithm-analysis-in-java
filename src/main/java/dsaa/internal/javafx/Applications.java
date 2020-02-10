@@ -28,6 +28,12 @@ public enum Applications {
     return applicationClass.getResource("./" + Namings.ofSimple(applicationClass, ".fxml"));
   }
 
+  public static void start(Stage stage, Application application) {
+    start(stage, ApplicationInfo.builder()
+        .fxml(fxml(application))
+        .build());
+  }
+
   public static void start(Stage primaryStage, ApplicationInfo info) {
     log.info("准备启动程序..");
     try {
