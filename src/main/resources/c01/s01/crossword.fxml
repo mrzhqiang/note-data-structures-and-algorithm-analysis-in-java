@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="c01.s01.Crossword">
+   <children>
+      <VBox layoutX="86.0" layoutY="127.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label text="字谜：">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="8.0" />
+               </VBox.margin>
+            </Label>
+            <HBox alignment="CENTER">
+               <children>
+                  <TableView fx:id="crosswordTable" prefHeight="120.0" tableMenuButtonVisible="true" HBox.hgrow="ALWAYS">
+                    <columns>
+                      <TableColumn fx:id="indexColumn" prefWidth="75.0" text="#" />
+                      <TableColumn fx:id="oneColumn" prefWidth="75.0" text="1" />
+                        <TableColumn fx:id="twoColumn" prefWidth="75.0" text="2" />
+                        <TableColumn fx:id="threeColumn" prefWidth="75.0" text="3" />
+                        <TableColumn fx:id="fourColumn" prefWidth="75.0" text="4" />
+                    </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                     <HBox.margin>
+                        <Insets bottom="8.0" />
+                     </HBox.margin>
+                  </TableView>
+               </children>
+            </HBox>
+            <Label text="词典：">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="8.0" />
+               </VBox.margin>
+            </Label>
+            <HBox alignment="CENTER" prefHeight="24.0">
+               <children>
+                  <Label text="this">
+                     <HBox.margin>
+                        <Insets right="8.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label text="two">
+                     <HBox.margin>
+                        <Insets right="8.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label text="fat">
+                     <HBox.margin>
+                        <Insets right="8.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label text="that">
+                     <HBox.margin>
+                        <Insets right="8.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+            <Label text="控制台：">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="8.0" />
+               </VBox.margin>
+            </Label>
+            <TextArea fx:id="consoleTextArea" prefHeight="100.0" prefWidth="200.0" wrapText="true">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin></TextArea>
+           <ProgressBar fx:id="taskProgressBar" cache="true" prefHeight="18.0" prefWidth="568.0" progress="0.0" />
+            <HBox alignment="CENTER" prefHeight="48.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="findBeginButton" mnemonicParsing="false" onAction="#onFindBeginClicked" text="开始查找" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+   </padding>
+</AnchorPane>
