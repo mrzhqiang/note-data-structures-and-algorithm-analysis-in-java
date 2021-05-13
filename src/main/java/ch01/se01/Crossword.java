@@ -115,10 +115,15 @@ public class Crossword extends Application {
     }
 
     private void verify() {
+        // 行
         for (int i = 0; i < letterList.size(); i++) {
+            // 列
             for (int j = 0; j < letterList.get(i).size(); j++) {
+                // 方向
                 for (Direction direction : Direction.values()) {
+                    // 单词表
                     for (String word : words) {
+                        // 单词是否在单词表中：首先判断字符数是否相等，其次逐个比较字符
                         if (direction.find(letterList, word, i, j)) {
                             console.log(String.format("在 %s,%s 位置通过 %s 方向找到匹配的 %s 字符", i, j, direction, word));
                         }

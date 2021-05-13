@@ -16,7 +16,7 @@ public class RadixSort
     {
         final int BUCKETS = 256;
         
-        ArrayList<String> [ ] buckets = new ArrayList<>[ BUCKETS ];
+        ArrayList<String> [ ] buckets = new ArrayList[ BUCKETS ];
         
         for( int i = 0; i < BUCKETS; i++ )
             buckets[ i ] = new ArrayList<>( );
@@ -86,8 +86,8 @@ public class RadixSort
     {
         final int BUCKETS = 256;
         
-        ArrayList<String> [ ] wordsByLength = new ArrayList<>[ maxLen + 1 ];
-        ArrayList<String> [ ] buckets = new ArrayList<>[ BUCKETS ];
+        ArrayList<String> [ ] wordsByLength = new ArrayList[ maxLen + 1 ];
+        ArrayList<String> [ ] buckets = new ArrayList[ BUCKETS ];
         
         for( int i = 0; i < wordsByLength.length; i++ )
             wordsByLength[ i ] = new ArrayList<>( );

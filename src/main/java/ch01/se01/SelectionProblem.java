@@ -30,13 +30,14 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS;
 
@@ -118,7 +119,7 @@ public class SelectionProblem extends Application {
             try {
                 String header = "|算法|大小|K 值|最大值|用时|" + System.lineSeparator()
                         + "|---|---|---|---|---|" + System.lineSeparator();
-                Files.write(filePath, header.getBytes(), StandardOpenOption.CREATE);
+                Files.write(filePath, header.getBytes(), CREATE);
             } catch (IOException ignore) {
             }
         }
@@ -203,11 +204,9 @@ public class SelectionProblem extends Application {
                 .doOnNext(Files::deleteIfExists)
                 .flatMap(path -> Observable.just(dataList)
                         .map(it -> it.stream().map(String::valueOf).collect(Collectors.toList()))
-                        .map(it -> Files.write(path, it, StandardOpenOption.CREATE)))
+                        .map(it -> Files.write(path, it, CREATE)))
                 .observeOn(JavaFxScheduler.platform())
-                .subscribe(path -> {
-                    console("数据已保存到文件：" + path);
-                }, e -> {
+                .subscribe(path -> console("数据已保存到文件：" + path), e -> {
                     console("保存数据出错：" + e.getMessage());
                     saveDataButton.setDisable(false);
                     taskProgressBar.setProgress(0);
@@ -290,9 +289,7 @@ public class SelectionProblem extends Application {
                             .filter(Files::exists)
                             .doOnNext(Files::delete)
                             .observeOn(JavaFxScheduler.platform())
-                            .subscribe(path -> {
-                                console("已删除文件：" + path);
-                            }, e -> {
+                            .subscribe(path -> console("已删除文件：" + path), e -> {
                                 console("清理数据出错：" + e.getMessage());
                                 cleanDataButton.setDisable(false);
                                 taskProgressBar.setProgress(0);
@@ -322,7 +319,7 @@ public class SelectionProblem extends Application {
         }
         timer = Observable.just(Stopwatch.createStarted())
                 .subscribeOn(Schedulers.computation())
-                .flatMap(watch -> Observable.interval(1000, 100, TimeUnit.MILLISECONDS)
+                .flatMap(watch -> Observable.interval(100, 100, TimeUnit.MILLISECONDS)
                         .filter(it -> watch.isRunning())
                         .map(it -> String.format("计时：%s", watch)))
                 .observeOn(JavaFxScheduler.platform())
@@ -382,61 +379,57 @@ public class SelectionProblem extends Application {
     }
 
     private String bubble(int k) {
-        int[] data = dataList.stream().mapToInt(value -> value).toArray();
+        // 复制数据，不破坏原有数据内容
+        List<Integer> data = Lists.newArrayList(dataList);
         Stopwatch started = Stopwatch.createStarted();
         bubbleSort(data);
-        long maxNumber = data[k - 1];
+        long maxNumber = data.get(k - 1);
         return writeFile("冒泡算法", dataList.size(), k, maxNumber, started.stop().toString());
     }
 
     private String truncate(int k) {
         Stopwatch started = Stopwatch.createStarted();
-        int[] truncate = dataList.stream().limit(k).mapToInt(value -> value).toArray();
-        bubbleSort(truncate);
-        int[] remaining = dataList.stream().skip(k).mapToInt(value -> value).toArray();
-        for (int remain : remaining) {
-            if (remain < truncate[k - 1]) {
+        // 需要倒序排序的数组
+        List<Integer> sortList = dataList.stream().limit(k).collect(Collectors.toList());
+        bubbleSort(sortList);
+        // 剩下的数组
+        List<Integer> remainingList = dataList.stream().skip(k).collect(Collectors.toList());
+        // 逐个从剩下的数组中取新元素
+        for (int newElement : remainingList) {
+            // 找到第 k 个元素的下标位置
+            int i = k - 1;
+            // 如果新元素小于第 k 个元素，则忽略之
+            if (newElement < sortList.get(i)) {
                 continue;
             }
-            int index = -1;
-            for (int i = truncate.length - 1; i >= 0; i--) {
-                if (remain < truncate[i]) {
-                    continue;
-                }
-                index = i;
+            // 找到正确的位置，即比前一个元素小（或成为第一个元素），比后一个元素大（或与之相等）
+            while (i > 0 && newElement >= sortList.get(i)) {
+                i--;
             }
-            if (index > -1 && remain >= truncate[index]) {
-                int[] newData = new int[truncate.length];
-                System.arraycopy(truncate, 0, newData, 0, index);
-                newData[index] = remain;
-                System.arraycopy(truncate, index, newData, index + 1, truncate.length - (index + 1));
-                truncate = newData;
-            }
+            // 挤出最后一个元素，不会造成数组拷贝
+            sortList.remove(k - 1);
+            // 将新元素放在正确的位置上，因为容量不变，所以不会导致扩容，但会将 i 之后的元素都往后移动一位
+            sortList.add(i, newElement);
         }
-        return writeFile("截断算法", dataList.size(), k, truncate[k - 1], started.stop().toString());
+        return writeFile("截断算法", dataList.size(), k, sortList.get(k - 1), started.stop().toString());
     }
 
-    private void bubbleSort(int[] data) {
-        for (int i = 0; i < data.length - 1; i++) {
-            for (int j = 0; j < data.length - 1 - i; j++) {
-                if (data[j] < data[j + 1]) {
-                    int temp = data[j];
-                    data[j] = data[j + 1];
-                    data[j + 1] = temp;
+    private void bubbleSort(List<Integer> data) {
+        for (int i = 0; i < data.size() - 1; i++) {
+            for (int j = 0; j < data.size() - 1 - i; j++) {
+                if (data.get(j) < data.get(j + 1)) {
+                    // set 会返回旧元素，恰好可以放在 j 上
+                    data.set(j, data.set(j + 1, data.get(j)));
                 }
             }
         }
     }
 
     private String writeFile(String name, int size, int k, long maxNumber, String time) {
-        String result = String.format(
-                "|%s|%s|%s|%s|%s|%s",
-                name, size, k, maxNumber, time, System.lineSeparator());
-        disposable.add(Observable.just(result)
-                .subscribeOn(Schedulers.io())
+        String result = String.format("|%s|%s|%s|%s|%s|%n", name, size, k, maxNumber, time);
+        Observable.just(result)
                 .map(String::getBytes)
-                .subscribe(bytes -> Files.write(Paths.get(filename), bytes, StandardOpenOption.CREATE,
-                        StandardOpenOption.APPEND)));
+                .blockingSubscribe(bytes -> Files.write(Paths.get(filename), bytes, CREATE, APPEND));
         return String.format("找到最大值：%s，用时：%s", maxNumber, time);
     }
 
