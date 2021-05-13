@@ -1,4 +1,4 @@
-package c02.s04;
+package ch02.se04;
 
 import com.google.common.base.Stopwatch;
 import internal.javafx.Actuator;

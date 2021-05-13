@@ -1,4 +1,4 @@
-package c01.s01;
+package ch01.se01;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Stopwatch;
