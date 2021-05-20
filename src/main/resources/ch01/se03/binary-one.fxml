@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch01.se03.BinaryOne">
+    <children>
+        <VBox layoutX="185.0" layoutY="67.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <TextField fx:id="binaryTextField"/>
+                        <Button fx:id="randomButton" mnemonicParsing="false" onAction="#onRandom" text="随机生成"/>
+                    </children>
+                </HBox>
+                <VBox prefHeight="200.0" prefWidth="100.0">
+                    <children>
+                        <Label text="控制台："/>
+                        <TextArea fx:id="consoleTextArea" prefHeight="200.0" prefWidth="200.0"/>
+                    </children>
+                </VBox>
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <Button fx:id="computeButton" mnemonicParsing="false" onAction="#onCompute" text="开始计算"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+    <padding>
+        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+    </padding>
+</AnchorPane>

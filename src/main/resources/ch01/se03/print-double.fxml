@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch01.se03.PrintDouble">
+    <children>
+        <VBox layoutX="147.0" layoutY="66.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <TextField fx:id="numberTextField" promptText="请输入 double 型数字"/>
+                        <Button fx:id="randomButton" mnemonicParsing="false" onAction="#onRandom" text="随机生成"/>
+                    </children>
+                </HBox>
+                <VBox prefHeight="200.0" prefWidth="100.0">
+                    <children>
+                        <Label text="控制台：">
+                            <VBox.margin>
+                                <Insets bottom="8.0" top="8.0"/>
+                            </VBox.margin>
+                        </Label>
+                        <TextArea fx:id="consoleTextArea" prefHeight="200.0" prefWidth="200.0"/>
+                    </children>
+                </VBox>
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <Button fx:id="startButton" mnemonicParsing="false" onAction="#onStart" text="开始打印"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+    <opaqueInsets>
+        <Insets/>
+    </opaqueInsets>
+    <padding>
+        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+    </padding>
+</AnchorPane>
