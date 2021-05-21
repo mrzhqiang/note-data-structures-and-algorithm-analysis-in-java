@@ -227,7 +227,7 @@ _提示：![](./images/min_x_max_integer.svg) 是小于或等于 `x` 的最大�
 
 解释：
 
-1. `i` 从接近 `N/2` 的地方开始往 `N` 求和，那么用 `1` 到 `N` 的和减去 `1` 到接近 `N/2-1` 的和，就得到近似值
+1. 这一题用到了公式 ![](./images/algebraic_operation2.svg)
 2. 前面学过 ![](./images/series7.svg)，则可得 `lnN - ln(N/2)`
 3. 通过对数公式 ![](./images/logarithm_other1.svg) 可知，`N/(N/2) = 2`，则可估算为 `ln2`
 
@@ -245,3 +245,78 @@ _提示：![](./images/min_x_max_integer.svg) 是小于或等于 `x` 的最大�
 4. 所以 `2^4^25 ≡ 2^4 ≡ 1(mod 5)`，从而得到 `2^100 ≡ 1 (mod 5)`
 
 ## 1.11
+
+英文答案：
+
+> (a) Proof is by induction. The statement is clearly true for `N = 1` and `N = 2`. Assume true for
+`N = 1, 2, …, k`. Then ![](./images/ex1_11_1.svg). By the induction hypothesis, the value of the sum
+on the right is ![](./images/ex1_11_2.svg), where the latter equality follows from the definition of
+the Fibonacci numbers. This proves the claim for `N = k + 1`, and hence for all `N`.
+> 
+> (b) As in the text, the proof is by induction. Observe that `φ + 1= φ^2`. This implies that `φ^−1 + φ^−2 = 1`. For `N = 1` and `N = 2`, the statement is true. Assume the claim is true for `N = 1, 2, …, k`.
+> 
+> ![](./images/ex1_11_3.svg)
+> 
+> by the definition, and we can use the inductive hypothesis on the right-hand side, obtaining
+> 
+> ![](./images/ex1_11_4_1.svg)
+> 
+> ![](./images/ex1_11_4_2.svg)
+> 
+> ![](./images/ex1_11_4_3.svg)
+>
+> and proving the theorem.
+> 
+> (c) See any of the advanced math references at the end of the chapter. The derivation involves the use of generating functions.
+ 
+
+翻译：
+
+- (a) 归纳法证明。 对于 `N = 1` 和 `N = 2`，这种说法显然是成立的。 假设 `N = 1, 2, …, k` 成立。那么 ![](./images/ex1_11_1.svg) 。 根据归纳假设，右边的和是 ![](./images/ex1_11_2.svg)，后者的等式来源于斐波那契数的定义。这就证明了 `N = k+1` 的要求，因此对于所有的 `N` 都成立。
+- (b) 正如文中所述，通过归纳法证明。观察 `φ + 1= φ^2`，这意味着 `φ^−1 + φ^−2 = 1`。对于 `N = 1` 和 `N = 2`，式子成立。假设式子对于 `N = 1, 2, …, k` 成立，则 ![](./images/ex1_11_3.svg)。根据定义，我们可以使用右边的归纳假设，得到：![](./images/ex1_11_4_1.svg)![](./images/ex1_11_4_2.svg)，则：![](./images/ex1_11_4_3.svg)，定理得证。
+- (c) 请参阅本章末尾的高等数学参考资料。推导过程涉及到母函数的使用。
+
+解惑：
+
+- (a) 由 `F1 = 1, F2 = 2, F3 = 3` 知，当等式左边 `N - 2 = 1` 时，左边为 `F1 = 1`，右边为 `3 - 2 = 1`，符合等式，当等式左边 `N - 2 = 2` 时，左边为 `F1 + F2 = 3`，右边为 `5 - 2 = 3`，也符合条件。同时根据定义有 ![](./images/ex1_11_1.svg)，将它代入题目等式右边得 ![](./images/ex1_11_2.svg)，由此可知假设成立。
+- (b) 由 `φ = (1+√5)/2` 得 `φ+1 = (1+√5+2)/2 = (3+√5)/2` 亦可得 `φ^2 = (1+5+2√5)/4 = (3+√5)/2`，此时可知 `φ + 1= φ^2`，将等式两边同时除以 `φ^2`，得 `φ^−1 + φ^−2 = 1`，随后开始归纳假设 ![](./images/ex1_11_4_1.svg)![](./images/ex1_11_4_2.svg)，这里用到指数公式 ![](./images/exponent1.svg)，合并得 ![](./images/ex1_11_4_3.svg)，从而证明式子成立。
+- (c) 参见传送门答案。
+
+_提示：这一题谷歌出来的答案比较靠谱，[传送门](http://ms.ntub.edu.tw/~spade/teaching/x-DS2005/DS-01-09.pdf) （注意，答案中有两个 (b)，第二个是 (c) 题的答案）。_
+
+## 1.12
+
+英文答案：
+
+> (a) ![](images/ex1_12_1.svg)
+> 
+> (b) The easiest way to prove this is by induction. The case `N = 1` is trivial. Otherwise,
+> 
+> ![](images/ex1_12_2_1.svg)
+> 
+> ![](images/ex1_12_2_2.svg)
+> 
+> ![](images/ex1_12_2_3.svg)
+> 
+> ![](images/ex1_12_2_4.svg)
+> 
+> ![](images/ex1_12_2_5.svg)
+> 
+> ![](images/ex1_12_2_6.svg)
+> 
+> ![](images/ex1_12_2_7.svg)
+
+解惑：
+
+- (a) `2i` 的级数提取公因式为 2 倍 `i` 的级数，代入公式 ![](./images/series4.svg) 得 `N(N+1)`，而 `1` 的级数为 `N`——由公式 ![](./images/algebraic_operation1.svg) 得出，将它们代入等式即可证明公式。
+- (b) 按照级数的定义代入 `N+1`，得 ![](images/ex1_12_2_1.svg)，随后用公式 ![](./images/series4.svg) 代入题中右边的式子，即 ![](images/ex1_12_2_2.svg)，接着提取公因式 `(N+1)^2`，则 ![](images/ex1_12_2_3.svg)，之后变换式子得到 ![](images/ex1_12_2_6.svg)，最后还是用公式 ![](./images/series4.svg) 代入得到 ![](images/ex1_12_2_7.svg)，定理得证。
+
+## 1.13
+
+答案：[Collection.java](../../src/main/java/ch01/Collection.java)
+
+## 1.14
+
+答案：[OrderedCollection.java](../../src/main/java/ch01/OrderedCollection.java)
+
+## 1.15
