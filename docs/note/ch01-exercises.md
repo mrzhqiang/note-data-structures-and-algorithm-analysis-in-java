@@ -288,28 +288,28 @@ _提示：这一题谷歌出来的答案比较靠谱，[传送门](http://ms.ntu
 
 英文答案：
 
-> (a) ![](images/ex1_12_1.svg)
+> (a) ![](./images/ex1_12_1.svg)
 > 
 > (b) The easiest way to prove this is by induction. The case `N = 1` is trivial. Otherwise,
 > 
-> ![](images/ex1_12_2_1.svg)
+> ![](./images/ex1_12_2_1.svg)
 > 
-> ![](images/ex1_12_2_2.svg)
+> ![](./images/ex1_12_2_2.svg)
 > 
-> ![](images/ex1_12_2_3.svg)
+> ![](./images/ex1_12_2_3.svg)
 > 
-> ![](images/ex1_12_2_4.svg)
+> ![](./images/ex1_12_2_4.svg)
 > 
-> ![](images/ex1_12_2_5.svg)
+> ![](./images/ex1_12_2_5.svg)
 > 
-> ![](images/ex1_12_2_6.svg)
+> ![](./images/ex1_12_2_6.svg)
 > 
-> ![](images/ex1_12_2_7.svg)
+> ![](./images/ex1_12_2_7.svg)
 
 解惑：
 
 - (a) `2i` 的级数提取公因式为 2 倍 `i` 的级数，代入公式 ![](./images/series4.svg) 得 `N(N+1)`，而 `1` 的级数为 `N`——由公式 ![](./images/algebraic_operation1.svg) 得出，将它们代入等式即可证明公式。
-- (b) 按照级数的定义代入 `N+1`，得 ![](images/ex1_12_2_1.svg)，随后用公式 ![](./images/series4.svg) 代入题中右边的式子，即 ![](images/ex1_12_2_2.svg)，接着提取公因式 `(N+1)^2`，则 ![](images/ex1_12_2_3.svg)，之后变换式子得到 ![](images/ex1_12_2_6.svg)，最后还是用公式 ![](./images/series4.svg) 代入得到 ![](images/ex1_12_2_7.svg)，定理得证。
+- (b) 按照级数的定义代入 `N+1`，得 ![](./images/ex1_12_2_1.svg)，随后用公式 ![](./images/series4.svg) 代入题中右边的式子，即 ![](./images/ex1_12_2_2.svg)，接着提取公因式 `(N+1)^2`，则 ![](./images/ex1_12_2_3.svg)，之后变换式子得到 ![](./images/ex1_12_2_6.svg)，最后还是用公式 ![](./images/series4.svg) 代入得到 ![](./images/ex1_12_2_7.svg)，定理得证。
 
 ## 1.13
 
