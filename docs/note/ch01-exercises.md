@@ -320,3 +320,5 @@ _提示：这一题谷歌出来的答案比较靠谱，[传送门](http://ms.ntu
 答案：[OrderedCollection.java](../../src/main/java/ch01/OrderedCollection.java)
 
 ## 1.15
+
+答案：[Rectangle.java](../../src/main/java/ch01/Rectangle.java)
