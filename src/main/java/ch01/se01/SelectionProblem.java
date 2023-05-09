@@ -1,5 +1,6 @@
 package ch01.se01;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
@@ -110,9 +111,16 @@ public class SelectionProblem extends Application {
     @FXML
     void initialize() {
         console("初始化程序..");
-        filename = String.format("%s-%s.md",
-                getClass().getCanonicalName().toLowerCase().replaceAll("\\.", "-"),
-                ISO_LOCAL_DATE.format(LocalDateTime.now()));
+        initMarkdown();
+        initFx();
+    }
+
+    private void initMarkdown() {
+        String canonicalName = this.getClass().getCanonicalName();
+        canonicalName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, canonicalName);
+        String name = CharMatcher.is('.').replaceFrom(canonicalName, '_');
+        String timestamp = ISO_LOCAL_DATE.format(LocalDateTime.now());
+        filename = String.format("%s-%s.md", name, timestamp);
         Path filePath = Paths.get(filename);
         // 给文件加上 markdown 格式的表格头，以便于渲染出表格统计不同算法的耗时对比
         if (Files.notExists(filePath)) {
@@ -123,19 +131,26 @@ public class SelectionProblem extends Application {
             } catch (IOException ignore) {
             }
         }
-        disposable.add(JavaFxObservable.valuesOf(state)
-                .subscribe(state -> {
-                    stateLabel.setText(state.text);
-                    stateLabel.setTextFill(state.color);
-                }));
-        disposable.add(JavaFxObservable.valuesOf(running)
-                .doOnNext(disabled -> findBeginButton.setDisable(disabled))
-                .subscribe(disabled -> findEndButton.setDisable(!disabled)));
+    }
+
+    private void initFx() {
+        disposable.add(JavaFxObservable.valuesOf(state).subscribe(this::handleState));
+        disposable.add(JavaFxObservable.valuesOf(running).subscribe(this::handleRunning));
         disposable.add(Observable.just(DATA_FILE)
                 .map(Paths::get)
                 .filter(Files::exists)
                 .subscribe(exists -> state.setValue(State.SAVED)));
         disposable.add(console.bind().subscribe(s -> consoleTextArea.appendText(s)));
+    }
+
+    private void handleRunning(boolean it) {
+        findBeginButton.setDisable(it);
+        findEndButton.setDisable(!it);
+    }
+
+    private void handleState(State it) {
+        stateLabel.setText(it.text);
+        stateLabel.setTextFill(it.color);
     }
 
     @FXML
@@ -149,7 +164,9 @@ public class SelectionProblem extends Application {
         }
         int dataSize = Integer.parseInt(dataSizeText);
         if (dataSize < MIN_DATA_SIZE || dataSize > MAX_DATA_SIZE) {
-            Dialogs.warn("数据大小超出范围(10--30000000)").show();
+            String message = Strings.lenientFormat(
+                    "数据大小超出范围(%s--%s)", MIN_DATA_SIZE, MAX_DATA_SIZE);
+            Dialogs.warn(message).show();
             dataSizeTextField.requestFocus();
             return;
         }
